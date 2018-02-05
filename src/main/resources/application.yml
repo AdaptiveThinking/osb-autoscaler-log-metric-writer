@@ -1,0 +1,35 @@
+### Kafka Information ###
+---
+spring:
+  profiles:
+    active: local
+  ### General Information ###
+  application:
+    name: example-dev
+
+  kafka:
+    host: 172.16.105.25
+    port: 9092
+    metric_http_topic: metric_http
+    metric_container_topic: metric_container
+    metric_application_topic: metric_application
+    scaling_topic: scaling
+    predic_topic: prediction
+    container_consumer_count: 3
+    request_consumer_count: 0
+
+### InfluxDB Information ###
+influxdb.host = 185.80.184.203
+influxdb.port = 8086
+influxdb.dbName = autoscaler
+influxdb.username = evoila
+influxdb.password = evoila
+influxdb.metric_http_measurement = metric_http
+influxdb.metric_container_instance_measurement = metric_container_instance
+influxdb.metric_container_application_measurement = metric_container_application
+influxdb.scaling_measurement = scaling
+influxdb.metric_name.http = "http"
+influxdb.metric_name.container = "container"
+#influxdb.retentionPolicy = one_month_only
+influxdb.retentionPolicy = autogen
+influxdb.consistencyLevel = ALL
