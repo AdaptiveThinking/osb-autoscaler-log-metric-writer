@@ -7,7 +7,6 @@ import org.springframework.context.annotation.PropertySource
 import de.cf.autoscaler.prometheus.beans.KafkaPropertiesBean
 import de.cf.autoscaler.prometheus.beans.PrometheusPropertiesBean
 
-
 @Configuration
 @PropertySource("classpath:/application.yaml")
 class WriterConfiguration {

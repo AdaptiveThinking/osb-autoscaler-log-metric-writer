@@ -1,6 +1,5 @@
 package de.cf.autoscaler.prometheus.kafka;
 
-
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import de.cf.autoscaler.kafka.AutoScalerConsumer;

@@ -15,7 +15,6 @@ object WriterApp {
     @JvmStatic
     fun main(args: Array<String>) {
         val ctx = AnnotationConfigApplicationContext(WriterConfiguration::class.java)
-        Assert.notNull(ctx)
 
         // ---- Disable log spam for convenience ----
         var log = LoggerFactory.getLogger(org.apache.kafka.clients.consumer.internals.Fetcher::class.java!!) as Logger

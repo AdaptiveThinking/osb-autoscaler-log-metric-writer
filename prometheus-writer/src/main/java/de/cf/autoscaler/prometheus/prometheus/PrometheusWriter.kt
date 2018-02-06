@@ -7,16 +7,12 @@ import io.prometheus.client.exporter.PushGateway
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import javax.annotation.PostConstruct
 
-
-
 class PrometheusWriter {
 
     constructor(kafkaProperties: KafkaProperties, prometheusPropertiesBean: PrometheusPropertiesBean) {}
 
     @PostConstruct
-    fun executePrometheusWriter() {
-
-    }
+    fun executePrometheusWriter() {}
 
     @Throws(Exception::class)
     fun executeBatchJob() {
