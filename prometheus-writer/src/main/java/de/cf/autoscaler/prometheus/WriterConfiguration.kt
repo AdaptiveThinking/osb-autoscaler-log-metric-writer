@@ -1,10 +1,10 @@
 package de.cf.autoscaler.prometheus
 
+import de.cf.autoscaler.kafka.KafkaPropertiesBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.PropertySource
 
-import de.cf.autoscaler.prometheus.beans.KafkaPropertiesBean
 import de.cf.autoscaler.prometheus.beans.PrometheusPropertiesBean
 
 @Configuration
