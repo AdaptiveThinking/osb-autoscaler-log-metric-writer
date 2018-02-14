@@ -18,18 +18,13 @@ spring:
     container_consumer_count: 3
     request_consumer_count: 0
 
-### InfluxDB Information ###
-influxdb.host = 185.80.184.203
-influxdb.port = 8086
-influxdb.dbName = autoscaler
-influxdb.username = evoila
-influxdb.password = evoila
-influxdb.metric_http_measurement = metric_http
-influxdb.metric_container_instance_measurement = metric_container_instance
-influxdb.metric_container_application_measurement = metric_container_application
-influxdb.scaling_measurement = scaling
-influxdb.metric_name.http = "http"
-influxdb.metric_name.container = "container"
-#influxdb.retentionPolicy = one_month_only
-influxdb.retentionPolicy = autogen
-influxdb.consistencyLevel = ALL
+  prometheus:
+    host: 185.80.184.203
+    port: 9091
+    metric_http_measurement: metric_http
+    metric_container_instance_measurement: metric_container_instance
+    metric_container_application_measurement: metric_container_application
+    scaling_measurement: scaling
+    metric_name:
+      http: http
+      container: container

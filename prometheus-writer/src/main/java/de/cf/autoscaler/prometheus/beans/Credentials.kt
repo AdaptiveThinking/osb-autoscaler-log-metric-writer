@@ -11,11 +11,4 @@ data class Credentials(var hostname: String?, var port: Int, var username: Strin
     val fullHost: String
         get() = hostname + ":" + port
 
-    companion object {
-
-        /**
-         *
-         */
-        private const val serialVersionUID = -6516455128811362745L
-    }
 }
