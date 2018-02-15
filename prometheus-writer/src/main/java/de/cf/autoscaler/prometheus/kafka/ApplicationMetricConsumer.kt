@@ -1,6 +1,5 @@
 package de.cf.autoscaler.prometheus.kafka
 
-
 import com.google.protobuf.InvalidProtocolBufferException
 
 import de.cf.autoscaler.kafka.AutoScalerConsumer
@@ -13,14 +12,10 @@ import de.cf.autoscaler.prometheus.prometheus.PrometheusWriter
 class ApplicationMetricConsumer(val groupId: String, val kafkaPropertiesBean: KafkaPropertiesBean,
                                 private val writer: PrometheusWriter) : AutoScalerConsumer {
 
-    private val consThread: ByteConsumerThread
-
-    init {
-        consThread = ByteConsumerThread(kafkaPropertiesBean.metricContainerTopic,
-                groupId,
-                kafkaPropertiesBean.host,
-                kafkaPropertiesBean.port, this)
-    }
+    private val consThread: ByteConsumerThread = ByteConsumerThread(kafkaPropertiesBean.metricContainerTopic,
+            groupId,
+            kafkaPropertiesBean.host,
+            kafkaPropertiesBean.port, this)
 
     override fun startConsumer() {
         consThread.start()

@@ -1,4 +1,0 @@
-/Users/johanneshiemer/Development/osb-framework/java/osb-autoscaler-influxdb-writer/prometheus-writer/src/main/java/de/cf/autoscaler/prometheus/kafka/HttpMetricConsumer.java
-/Users/johanneshiemer/Development/osb-framework/java/osb-autoscaler-influxdb-writer/prometheus-writer/src/main/java/de/cf/autoscaler/prometheus/kafka/InstanceMetricConsumer.java
-/Users/johanneshiemer/Development/osb-framework/java/osb-autoscaler-influxdb-writer/prometheus-writer/src/main/java/de/cf/autoscaler/prometheus/kafka/ScalingLogConsumer.java
-/Users/johanneshiemer/Development/osb-framework/java/osb-autoscaler-influxdb-writer/prometheus-writer/src/main/java/de/cf/autoscaler/prometheus/kafka/ApplicationMetricConsumer.java

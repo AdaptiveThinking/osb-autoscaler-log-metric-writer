@@ -12,15 +12,10 @@ import de.cf.autoscaler.prometheus.prometheus.PrometheusWriter
 class HttpMetricConsumer(groupId: String, val kafkaPropertiesBean: KafkaPropertiesBean,
                          private val writer: PrometheusWriter) : AutoScalerConsumer {
 
-    private val consThread: ByteConsumerThread
-
-    init {
-        consThread = ByteConsumerThread(kafkaPropertiesBean.metricContainerTopic,
-                groupId,
-                kafkaPropertiesBean.host,
-                kafkaPropertiesBean.port, this)
-
-    }
+    private val consThread: ByteConsumerThread = ByteConsumerThread(kafkaPropertiesBean.metricContainerTopic,
+            groupId,
+            kafkaPropertiesBean.host,
+            kafkaPropertiesBean.port, this)
 
     override fun startConsumer() {
         consThread.start()
@@ -33,7 +28,7 @@ class HttpMetricConsumer(groupId: String, val kafkaPropertiesBean: KafkaProperti
     override fun consume(bytes: ByteArray) {
         try {
             val metric = HttpMetric(ProtoHttpMetric.parseFrom(bytes))
-            // writer.writeHttpMetric(metric)
+            writer.writeHttpMetric(metric)
 
         } catch (e: InvalidProtocolBufferException) {
             e.printStackTrace()

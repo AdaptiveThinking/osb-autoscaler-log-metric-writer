@@ -11,6 +11,7 @@ import de.cf.autoscaler.prometheus.constants.HttpMetricFields
 import de.cf.autoscaler.prometheus.constants.InstanceMetricFields
 import de.cf.autoscaler.prometheus.constants.ScalingFields
 import de.cf.autoscaler.prometheus.kafka.ApplicationMetricConsumer
+import de.cf.autoscaler.prometheus.kafka.HttpMetricConsumer
 import de.cf.autoscaler.prometheus.kafka.InstanceMetricConsumer
 import de.cf.autoscaler.prometheus.kafka.ScalingLogConsumer
 import io.prometheus.client.CollectorRegistry
@@ -25,9 +26,8 @@ class PrometheusWriter @Autowired constructor(
     private val kafkaPropertiesBean: KafkaPropertiesBean,
     private val prometheusPropertiesBean: PrometheusPropertiesBean) {
 
-    private lateinit var pushGateway: PushGateway
-
     private val registry = CollectorRegistry()
+    private lateinit var pushGateway: PushGateway
 
     /**
      * Http Metrics
@@ -166,12 +166,6 @@ class PrometheusWriter @Autowired constructor(
             .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
             .register(registry)
 
-    private val latencyLowerLimit = Gauge
-            .build(ScalingFields.LATENCY_LOWER_LIMIT.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
-
-
     companion object {
         const val DESCRIPTION = "None"
         const val COMPONENT_LABEL_NAME = "component"
@@ -184,11 +178,12 @@ class PrometheusWriter @Autowired constructor(
         containerMetricConsumerRunner()
         applicationMetricConsumerRunner()
         scalingLogConsumerRunner()
+        httpMetricConsumerRunner()
         pushGateway = PushGateway(prometheusPropertiesBean.host + ":" + prometheusPropertiesBean.port)
 
     }
 
-    fun containerMetricConsumerRunner() {
+    private fun containerMetricConsumerRunner() {
         val containerMetricConsumer: MutableList<InstanceMetricConsumer> = mutableListOf()
         for (i in 1 until kafkaPropertiesBean.containerConsumerCount) {
             containerMetricConsumer.add(InstanceMetricConsumer("writer_container_metric",
@@ -198,107 +193,105 @@ class PrometheusWriter @Autowired constructor(
         }
     }
 
-    fun applicationMetricConsumerRunner() {
-        val applicationContainerMetricConsumer = ApplicationMetricConsumer("writer_applicaton_container_metric",
+    private fun applicationMetricConsumerRunner() {
+        val applicationContainerMetricConsumer = ApplicationMetricConsumer("writer_application_container_metric",
                 kafkaPropertiesBean, this)
         applicationContainerMetricConsumer.startConsumer()
     }
 
-    fun scalingLogConsumerRunner() {
+    private fun scalingLogConsumerRunner() {
         val scalingConsumer = ScalingLogConsumer("writer_scaling",
                 kafkaPropertiesBean, this)
-        scalingConsumer.startConsumer();
+        scalingConsumer.startConsumer()
+    }
+
+    private fun httpMetricConsumerRunner() {
+        val httpMetricConsumer = HttpMetricConsumer("writer_http_metric",
+                kafkaPropertiesBean, this)
+        httpMetricConsumer.startConsumer()
     }
 
     fun writeHttpMetric(data: HttpMetric) {
-        if (data != null) {
-            httpRequestsGauge.labels(data.appId)
-                    .set(data.requests.toDouble())
-            httpLatencyGauge.labels(data.appId)
-                    .set(data.latency.toDouble())
+        httpRequestsGauge.labels(data.appId)
+                .set(data.requests.toDouble())
+        httpLatencyGauge.labels(data.appId)
+                .set(data.latency.toDouble())
 
-            pushGateway.pushAdd(registry, "http_metrics")
-        }
+        pushGateway.pushAdd(registry, "http_metrics")
     }
 
     // Todo: Ask Marius why this is there?
     fun writeInstanceContainerMetric(data: ContainerMetric) {
-        if (data != null) {
-            cpuInstanceGauge.labels(data.instanceIndex.toString(), data.appId)
-                    .set(data.cpu.toDouble())
-            ramInstanceGauge.labels(data.instanceIndex.toString(), data.appId)
-                    .set(data.ram.toDouble())
+        cpuInstanceGauge.labels(data.instanceIndex.toString(), data.appId)
+                .set(data.cpu.toDouble())
+        ramInstanceGauge.labels(data.instanceIndex.toString(), data.appId)
+                .set(data.ram.toDouble())
 
-            pushGateway.pushAdd(registry, "instance_container_metrics")
-        }
+        pushGateway.pushAdd(registry, "instance_container_metrics")
     }
 
     fun writeApplicationContainerMetric(data: ApplicationMetric) {
-        if (data != null) {
-            cpuGauge.labels(data.appId)
-                    .set(data.cpu.toDouble())
-            ramGauge.labels(data.appId)
-                    .set(data.ram.toDouble())
-            instanceCountGauge.labels(data.appId)
-                    .set(data.instanceCount.toDouble())
-            requestsGauge.labels(data.appId)
-                    .set(data.requests.toDouble())
-            latencyGauge.labels(data.appId)
-                    .set(data.latency.toDouble())
-            quotientGauge.labels(data.appId)
-                    .set(data.quotient.toDouble())
+        cpuGauge.labels(data.appId)
+                .set(data.cpu.toDouble())
+        ramGauge.labels(data.appId)
+                .set(data.ram.toDouble())
+        instanceCountGauge.labels(data.appId)
+                .set(data.instanceCount.toDouble())
+        requestsGauge.labels(data.appId)
+                .set(data.requests.toDouble())
+        latencyGauge.labels(data.appId)
+                .set(data.latency.toDouble())
+        quotientGauge.labels(data.appId)
+                .set(data.quotient.toDouble())
 
-            pushGateway.pushAdd(registry, "application_container_metrics")
-        }
+        pushGateway.pushAdd(registry, "application_container_metrics")
     }
 
     fun writeScalingLog(data: ScalingLog) {
-        if (data != null) {
-            // Todo: Ask Marius what measurement is about and where the value should be stored
-            val measurement = prometheusPropertiesBean.scalingMeasurement
-            var component: String = "undefined"
-            when (data.component) {
-                ScalingLog.HTTP_REQUEST_BASED -> component = "requests"
-                ScalingLog.HTTP_LATENCY_BASED -> component = "latency"
-                ScalingLog.CONTAINER_CPU_BASED -> component = "cpu"
-                ScalingLog.CONTAINER_RAM_BASED -> component = "ram"
-                ScalingLog.PREDICTOR_BASED -> component = "predictor"
-                ScalingLog.LIMIT_BASED -> component = "limit"
-            }
-
-            oldInstanceCountGauge.labels(component, data.appId)
-                    .set(data.oldInstances.toDouble())
-            newInstanceCountGauge.labels(component, data.appId)
-                    .set(data.newInstances.toDouble())
-            currentMaxInstanceLimitGauge.labels(component, data.appId)
-                    .set(data.currentMaxInstanceLimit.toDouble())
-            currentMinInstanceLimitGauge.labels(component, data.appId)
-                    .set(data.currentMinInstanceLimit.toDouble())
-            cpuLoadGauge.labels(component, data.appId)
-                    .set(data.currentCpuLoad.toDouble())
-            cpuUpperLimitGauge.labels(component, data.appId)
-                    .set(data.currentCpuUpperLimit.toDouble())
-            cpuLowerLimitGauge.labels(component, data.appId)
-                    .set(data.currentCpuLowerLimit.toDouble())
-            ramLoadGauge.labels(component, data.appId)
-                    .set(data.currentRamLoad.toDouble())
-            ramUpperLimitGauge.labels(component, data.appId)
-                    .set(data.currentRamUpperLimit.toDouble())
-            ramLowerLimitGauge.labels(component, data.appId)
-                    .set(data.currentRamLowerLimit.toDouble())
-            requestCountGauge.labels(component, data.appId)
-                    .set(data.currentRequestCount.toDouble())
-            latencyValueGauge.labels(component, data.appId)
-                    .set(data.currentLatencyValue.toDouble())
-            latencyUpperLimitGauge.labels(component, data.appId)
-                    .set(data.currentLatencyUpperLimit.toDouble())
-            latencyLowerLimitGauge.labels(component, data.appId)
-                    .set(data.currentLatencyLowerLimit.toDouble())
-            quotientValueGauge.labels(component, data.appId)
-                    .set(data.currentQuotientValue.toDouble())
-
-            pushGateway.pushAdd(registry, "scaling_events")
+        // Todo: Ask Marius what measurement is about and where the value should be stored
+        val measurement = prometheusPropertiesBean.scalingMeasurement
+        var component = "undefined"
+        when (data.component) {
+            ScalingLog.HTTP_REQUEST_BASED -> component = "requests"
+            ScalingLog.HTTP_LATENCY_BASED -> component = "latency"
+            ScalingLog.CONTAINER_CPU_BASED -> component = "cpu"
+            ScalingLog.CONTAINER_RAM_BASED -> component = "ram"
+            ScalingLog.PREDICTOR_BASED -> component = "predictor"
+            ScalingLog.LIMIT_BASED -> component = "limit"
         }
+
+        oldInstanceCountGauge.labels(component, data.appId)
+                .set(data.oldInstances.toDouble())
+        newInstanceCountGauge.labels(component, data.appId)
+                .set(data.newInstances.toDouble())
+        currentMaxInstanceLimitGauge.labels(component, data.appId)
+                .set(data.currentMaxInstanceLimit.toDouble())
+        currentMinInstanceLimitGauge.labels(component, data.appId)
+                .set(data.currentMinInstanceLimit.toDouble())
+        cpuLoadGauge.labels(component, data.appId)
+                .set(data.currentCpuLoad.toDouble())
+        cpuUpperLimitGauge.labels(component, data.appId)
+                .set(data.currentCpuUpperLimit.toDouble())
+        cpuLowerLimitGauge.labels(component, data.appId)
+                .set(data.currentCpuLowerLimit.toDouble())
+        ramLoadGauge.labels(component, data.appId)
+                .set(data.currentRamLoad.toDouble())
+        ramUpperLimitGauge.labels(component, data.appId)
+                .set(data.currentRamUpperLimit.toDouble())
+        ramLowerLimitGauge.labels(component, data.appId)
+                .set(data.currentRamLowerLimit.toDouble())
+        requestCountGauge.labels(component, data.appId)
+                .set(data.currentRequestCount.toDouble())
+        latencyValueGauge.labels(component, data.appId)
+                .set(data.currentLatencyValue.toDouble())
+        latencyUpperLimitGauge.labels(component, data.appId)
+                .set(data.currentLatencyUpperLimit.toDouble())
+        latencyLowerLimitGauge.labels(component, data.appId)
+                .set(data.currentLatencyLowerLimit.toDouble())
+        quotientValueGauge.labels(component, data.appId)
+                .set(data.currentQuotientValue.toDouble())
+
+        pushGateway.pushAdd(registry, "scaling_events")
     }
 
 }
