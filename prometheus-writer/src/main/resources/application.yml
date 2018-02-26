@@ -2,29 +2,29 @@
 ---
 spring:
   profiles:
-    active: local
+    active: default
   ### General Information ###
   application:
     name: example-dev
 
-  kafka:
-    host: 172.16.105.25
-    port: 9092
-    metric_http_topic: metric_http
-    metric_container_topic: metric_container
-    metric_application_topic: metric_application
-    scaling_topic: scaling
-    predic_topic: prediction
-    container_consumer_count: 3
-    request_consumer_count: 0
+kafka:
+  host: 10.244.0.3
+  port: 9092
+  metric_http_topic: metric_http
+  metric_container_topic: metric_container
+  metric_application_topic: metric_application
+  scaling_topic: scaling
+  predic_topic: prediction
+  container_consumer_count: 3
+  request_consumer_count: 0
 
-  prometheus:
-    host: 185.80.184.203
-    port: 9091
-    metric_http_measurement: metric_http
-    metric_container_instance_measurement: metric_container_instance
-    metric_container_application_measurement: metric_container_application
-    scaling_measurement: scaling
-    metric_name:
-      http: http
-      container: container
+prometheus:
+  host: 10.244.0.6
+  port: 9091
+  metric_http_measurement: metric_http
+  metric_container_instance_measurement: metric_container_instance
+  metric_container_application_measurement: metric_container_application
+  scaling_measurement: scaling
+  metric_name:
+    http: http
+    container: container
