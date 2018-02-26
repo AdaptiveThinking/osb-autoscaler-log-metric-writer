@@ -26,145 +26,97 @@ class PrometheusWriter @Autowired constructor(
     private val kafkaPropertiesBean: KafkaPropertiesBean,
     private val prometheusPropertiesBean: PrometheusPropertiesBean) {
 
-    private val registry = CollectorRegistry()
+    private val httpRegistry = CollectorRegistry()
+    private val instanceContainerRegistry = CollectorRegistry()
+    private val containerMetricRegistry = CollectorRegistry()
+    private val applicationRegistry = CollectorRegistry()
     private lateinit var pushGateway: PushGateway
 
     /**
      * Http Metrics
      */
-    private val httpRequestsGauge = Gauge
-            .build(HttpMetricFields.REQUESTS.httpMetric, DESCRIPTION)
-            .labelNames(APP_ID_LABEL_NAME)
-            .register(registry)
+    private val httpRequestsGauge = httpMetricsGauge(HttpMetricFields.REQUESTS)
 
-    private val httpLatencyGauge = Gauge
-            .build(HttpMetricFields.LATENCY.httpMetric, DESCRIPTION)
-            .labelNames(APP_ID_LABEL_NAME)
-            .register(registry)
+    private val httpLatencyGauge = httpMetricsGauge(HttpMetricFields.LATENCY)
+
+    private fun httpMetricsGauge(httpMetricFields: HttpMetricFields): Gauge {
+        return Gauge.build(httpMetricFields.httpMetric, DESCRIPTION)
+                .labelNames(APP_ID_LABEL_NAME)
+                .register(httpRegistry)
+    }
 
     /**
      * Instance Container Metrics
      */
-    private val cpuInstanceGauge = Gauge
-            .build(InstanceMetricFields.CPU.instanceMetric, DESCRIPTION)
-            .labelNames(APP_INSTANCE, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val cpuInstanceGauge = instanceContainerMetricsGauge(InstanceMetricFields.CPU)
 
-    private val ramInstanceGauge = Gauge
-            .build(InstanceMetricFields.CPU.instanceMetric, DESCRIPTION)
-            .labelNames(APP_INSTANCE, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val ramInstanceGauge = instanceContainerMetricsGauge(InstanceMetricFields.RAM)
 
+    private fun instanceContainerMetricsGauge(instanceMetricFields: InstanceMetricFields): Gauge {
+        return Gauge.build(instanceMetricFields.instanceMetric, DESCRIPTION)
+                .labelNames(APP_INSTANCE, APP_ID_LABEL_NAME)
+                .register(instanceContainerRegistry)
+    }
     /**
      * Application Container Metrics
      */
-    private val cpuGauge = Gauge
-            .build(ApplicationMetricFields.CPU.applicationMetric, DESCRIPTION)
-            .labelNames(APP_ID_LABEL_NAME)
-            .register(registry)
+    private val cpuGauge = applicationContainerMetricsGauge(ApplicationMetricFields.CPU)
 
-    private val ramGauge = Gauge
-            .build(ApplicationMetricFields.RAM.applicationMetric, DESCRIPTION)
-            .labelNames(APP_ID_LABEL_NAME)
-            .register(registry)
+    private val ramGauge = applicationContainerMetricsGauge(ApplicationMetricFields.RAM)
 
-    private val instanceCountGauge = Gauge
-            .build(ApplicationMetricFields.INSTANCES.applicationMetric, DESCRIPTION)
-            .labelNames(APP_ID_LABEL_NAME)
-            .register(registry)
+    private val instanceCountGauge = applicationContainerMetricsGauge(ApplicationMetricFields.INSTANCES)
 
-    private val requestsGauge = Gauge
-            .build(ApplicationMetricFields.REQUESTS.applicationMetric, DESCRIPTION)
-            .labelNames(APP_ID_LABEL_NAME)
-            .register(registry)
+    private val requestsGauge = applicationContainerMetricsGauge(ApplicationMetricFields.REQUESTS)
 
-    private val latencyGauge = Gauge
-            .build(ApplicationMetricFields.LATENCY.applicationMetric, DESCRIPTION)
-            .labelNames(APP_ID_LABEL_NAME)
-            .register(registry)
+    private val latencyGauge = applicationContainerMetricsGauge(ApplicationMetricFields.LATENCY)
 
-    private val quotientGauge = Gauge
-            .build(ApplicationMetricFields.QUOTIENT.applicationMetric, DESCRIPTION)
-            .labelNames(APP_ID_LABEL_NAME)
-            .register(registry)
+    private val quotientGauge = applicationContainerMetricsGauge(ApplicationMetricFields.QUOTIENT)
+
+    private fun applicationContainerMetricsGauge(applicationMetricFields: ApplicationMetricFields): Gauge {
+        return Gauge.build(applicationMetricFields.applicationMetric, DESCRIPTION)
+                .labelNames(APP_ID_LABEL_NAME)
+                .register(containerMetricRegistry)
+    }
 
     /**
      * Scaling Event Metrics
      */
-    private val oldInstanceCountGauge = Gauge
-            .build(ScalingFields.OLD_INSTANCE_COUNT.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val oldInstanceCountGauge = scalingEventMetrics(ScalingFields.OLD_INSTANCE_COUNT)
 
-    private val newInstanceCountGauge = Gauge
-            .build(ScalingFields.NEW_INSTANCE_COUNT.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val newInstanceCountGauge = scalingEventMetrics(ScalingFields.NEW_INSTANCE_COUNT)
 
-    private val currentMaxInstanceLimitGauge = Gauge
-            .build(ScalingFields.MAX_INSTANCE_LIMIT.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val currentMaxInstanceLimitGauge = scalingEventMetrics(ScalingFields.MAX_INSTANCE_LIMIT)
 
-    private val currentMinInstanceLimitGauge = Gauge
-            .build(ScalingFields.MIN_INSTANCE_LIMIT.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val currentMinInstanceLimitGauge = scalingEventMetrics(ScalingFields.MIN_INSTANCE_LIMIT)
 
-    private val cpuLoadGauge = Gauge
-            .build(ScalingFields.CPU_LOAD.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val cpuLoadGauge = scalingEventMetrics(ScalingFields.CPU_LOAD)
 
-    private val cpuUpperLimitGauge = Gauge
-            .build(ScalingFields.CPU_UPPER_LIMIT.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val cpuUpperLimitGauge = scalingEventMetrics(ScalingFields.CPU_UPPER_LIMIT)
 
-    private val cpuLowerLimitGauge = Gauge
-            .build(ScalingFields.CPU_LOWER_LIMIT.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val cpuLowerLimitGauge = scalingEventMetrics(ScalingFields.CPU_LOWER_LIMIT)
 
-    private val ramLoadGauge = Gauge
-            .build(ScalingFields.RAM_LOAD.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val ramLoadGauge = scalingEventMetrics(ScalingFields.RAM_LOAD)
 
-    private val ramUpperLimitGauge = Gauge
-            .build(ScalingFields.RAM_UPPER_LIMIT.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val ramUpperLimitGauge = scalingEventMetrics(ScalingFields.RAM_UPPER_LIMIT)
 
-    private val ramLowerLimitGauge = Gauge
-            .build(ScalingFields.RAM_LOWER_LIMIT.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val ramLowerLimitGauge = scalingEventMetrics(ScalingFields.RAM_LOWER_LIMIT)
 
-    private val requestCountGauge = Gauge
-            .build(ScalingFields.REQUEST_COUNT.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val requestCountGauge = scalingEventMetrics(ScalingFields.REQUEST_COUNT)
 
-    private val latencyValueGauge = Gauge
-            .build(ScalingFields.LATENCY_VALUE.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val latencyValueGauge = scalingEventMetrics(ScalingFields.LATENCY_VALUE)
 
-    private val latencyUpperLimitGauge = Gauge
-            .build(ScalingFields.LATENCY_UPPER_LIMIT.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val latencyUpperLimitGauge = scalingEventMetrics(ScalingFields.LATENCY_UPPER_LIMIT)
 
-    private val latencyLowerLimitGauge = Gauge
-            .build(ScalingFields.LATENCY_LOWER_LIMIT.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val latencyLowerLimitGauge = scalingEventMetrics(ScalingFields.LATENCY_LOWER_LIMIT)
 
-    private val quotientValueGauge = Gauge
-            .build(ScalingFields.QUOTIENT_VALUE.scalingField, DESCRIPTION)
-            .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
-            .register(registry)
+    private val quotientValueGauge = scalingEventMetrics(ScalingFields.QUOTIENT_VALUE)
+
+    private fun scalingEventMetrics(scalingFields: ScalingFields): Gauge {
+        return Gauge
+                .build(scalingFields.scalingField, DESCRIPTION)
+                .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
+                .register(applicationRegistry)
+    }
 
     companion object {
         const val DESCRIPTION = "None"
@@ -189,7 +141,7 @@ class PrometheusWriter @Autowired constructor(
             containerMetricConsumer.add(InstanceMetricConsumer("writer_container_metric",
                 kafkaPropertiesBean, this))
 
-            containerMetricConsumer[i].startConsumer()
+            containerMetricConsumer[i-1].startConsumer()
         }
     }
 
@@ -217,7 +169,7 @@ class PrometheusWriter @Autowired constructor(
         httpLatencyGauge.labels(data.appId)
                 .set(data.latency.toDouble())
 
-        pushGateway.pushAdd(registry, "http_metrics")
+        pushGateway.pushAdd(httpRegistry, "http_metrics")
     }
 
     // Todo: Ask Marius why this is there?
@@ -227,7 +179,7 @@ class PrometheusWriter @Autowired constructor(
         ramInstanceGauge.labels(data.instanceIndex.toString(), data.appId)
                 .set(data.ram.toDouble())
 
-        pushGateway.pushAdd(registry, "instance_container_metrics")
+        pushGateway.pushAdd(instanceContainerRegistry, "instance_container_metrics")
     }
 
     fun writeApplicationContainerMetric(data: ApplicationMetric) {
@@ -244,7 +196,7 @@ class PrometheusWriter @Autowired constructor(
         quotientGauge.labels(data.appId)
                 .set(data.quotient.toDouble())
 
-        pushGateway.pushAdd(registry, "application_container_metrics")
+        pushGateway.pushAdd(containerMetricRegistry, "application_container_metrics")
     }
 
     fun writeScalingLog(data: ScalingLog) {
@@ -291,7 +243,7 @@ class PrometheusWriter @Autowired constructor(
         quotientValueGauge.labels(component, data.appId)
                 .set(data.currentQuotientValue.toDouble())
 
-        pushGateway.pushAdd(registry, "scaling_events")
+        pushGateway.pushAdd(applicationRegistry, "scaling_events")
     }
 
 }
