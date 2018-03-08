@@ -7,7 +7,7 @@ import de.cf.autoscaler.kafka.ByteConsumerThread
 import de.cf.autoscaler.kafka.KafkaPropertiesBean
 import de.cf.autoscaler.kafka.messages.ContainerMetric
 import de.cf.autoscaler.kafka.protobuf.ProtobufContainerMetricWrapper.ProtoContainerMetric
-import de.cf.autoscaler.prometheus.prometheus.PrometheusWriter
+import de.cf.autoscaler.prometheus.PrometheusWriter
 
 class InstanceMetricConsumer(val groupId: String, val kafkaPropertiesBean: KafkaPropertiesBean,
                              private val writer: PrometheusWriter) : AutoScalerConsumer {

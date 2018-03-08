@@ -1,4 +1,4 @@
-package de.cf.autoscaler.prometheus.prometheus
+package de.cf.autoscaler.prometheus
 
 import de.cf.autoscaler.kafka.KafkaPropertiesBean
 import de.cf.autoscaler.kafka.messages.ApplicationMetric
@@ -40,8 +40,8 @@ class PrometheusWriter @Autowired constructor(
     private val httpLatencyGauge = httpMetricsGauge(HttpMetricFields.LATENCY)
 
     private fun httpMetricsGauge(httpMetricFields: HttpMetricFields): Gauge {
-        return Gauge.build(httpMetricFields.httpMetric, DESCRIPTION)
-                .labelNames(APP_ID_LABEL_NAME)
+        return Gauge.build(httpMetricFields.httpMetric, de.cf.autoscaler.prometheus.PrometheusWriter.Companion.DESCRIPTION)
+                .labelNames(de.cf.autoscaler.prometheus.PrometheusWriter.Companion.APP_ID_LABEL_NAME)
                 .register(httpRegistry)
     }
 
@@ -53,8 +53,8 @@ class PrometheusWriter @Autowired constructor(
     private val ramInstanceGauge = instanceContainerMetricsGauge(InstanceMetricFields.RAM)
 
     private fun instanceContainerMetricsGauge(instanceMetricFields: InstanceMetricFields): Gauge {
-        return Gauge.build(instanceMetricFields.instanceMetric, DESCRIPTION)
-                .labelNames(APP_INSTANCE, APP_ID_LABEL_NAME)
+        return Gauge.build(instanceMetricFields.instanceMetric, de.cf.autoscaler.prometheus.PrometheusWriter.Companion.DESCRIPTION)
+                .labelNames(de.cf.autoscaler.prometheus.PrometheusWriter.Companion.APP_INSTANCE, de.cf.autoscaler.prometheus.PrometheusWriter.Companion.APP_ID_LABEL_NAME)
                 .register(instanceContainerRegistry)
     }
     /**
@@ -73,8 +73,8 @@ class PrometheusWriter @Autowired constructor(
     private val quotientGauge = applicationContainerMetricsGauge(ApplicationMetricFields.QUOTIENT)
 
     private fun applicationContainerMetricsGauge(applicationMetricFields: ApplicationMetricFields): Gauge {
-        return Gauge.build(applicationMetricFields.applicationMetric, DESCRIPTION)
-                .labelNames(APP_ID_LABEL_NAME)
+        return Gauge.build(applicationMetricFields.applicationMetric, de.cf.autoscaler.prometheus.PrometheusWriter.Companion.DESCRIPTION)
+                .labelNames(de.cf.autoscaler.prometheus.PrometheusWriter.Companion.APP_ID_LABEL_NAME)
                 .register(containerMetricRegistry)
     }
 
@@ -113,8 +113,8 @@ class PrometheusWriter @Autowired constructor(
 
     private fun scalingEventMetrics(scalingFields: ScalingFields): Gauge {
         return Gauge
-                .build(scalingFields.scalingField, DESCRIPTION)
-                .labelNames(COMPONENT_LABEL_NAME, APP_ID_LABEL_NAME)
+                .build(scalingFields.scalingField, de.cf.autoscaler.prometheus.PrometheusWriter.Companion.DESCRIPTION)
+                .labelNames(de.cf.autoscaler.prometheus.PrometheusWriter.Companion.COMPONENT_LABEL_NAME, de.cf.autoscaler.prometheus.PrometheusWriter.Companion.APP_ID_LABEL_NAME)
                 .register(applicationRegistry)
     }
 

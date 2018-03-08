@@ -7,7 +7,7 @@ import de.cf.autoscaler.kafka.ByteConsumerThread
 import de.cf.autoscaler.kafka.KafkaPropertiesBean
 import de.cf.autoscaler.kafka.messages.ScalingLog
 import de.cf.autoscaler.kafka.protobuf.ProtobufScalingLogWrapper.ProtoScalingLog
-import de.cf.autoscaler.prometheus.prometheus.PrometheusWriter
+import de.cf.autoscaler.prometheus.PrometheusWriter
 
 class ScalingLogConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBean,
                          private val writer: PrometheusWriter) : AutoScalerConsumer {
