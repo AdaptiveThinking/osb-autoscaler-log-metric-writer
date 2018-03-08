@@ -13,6 +13,7 @@ kafka:
   metric_http_topic: metric_http
   metric_container_topic: metric_container
   metric_application_topic: metric_application
+  log_message_topic: log_messages
   scaling_topic: scaling
   predic_topic: prediction
   container_consumer_count: 3
@@ -28,3 +29,8 @@ prometheus:
   metric_name:
     http: http
     container: container
+
+elasticsearch:
+  host: 10.244.0.6
+  port: 9300
+  cluster_name: elasticsearch-cluster
