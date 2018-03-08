@@ -1,3 +1,4 @@
 prometheus-writer/target
 .idea/
 *.iml
+elasticsearch-writer/target
