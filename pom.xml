@@ -17,14 +17,31 @@
 
 	<modules>
 		<module>messaging</module>
-		<module>prometheus-writer</module>		
+		<module>prometheus-writer</module>
+		<module>elasticsearch-writer</module>
 	</modules>
 
 	<properties>
 		<java.version>1.8</java.version>
-	</properties>
+        <kotlin.version>1.2.30</kotlin.version>
+		<elasticsearch.version>6.2.2</elasticsearch.version>
+    </properties>
 
-	<repositories>
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <repositories>
 		<repository>
 			<id>Maven Central</id>
 			<name>Central Maven Repository</name>
@@ -62,4 +79,35 @@
 			<url>http://repo.spring.io/milestone</url>
 		</pluginRepository>
 	</pluginRepositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmTarget>1.8</jvmTarget>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
 </project>

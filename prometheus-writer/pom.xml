@@ -21,6 +21,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
         <kotlin.version>1.2.21</kotlin.version>
+        <elasticsearch.version>6.2.2</elasticsearch.version>
     </properties>
 
     <dependencies>
@@ -33,6 +34,12 @@
             <groupId>de.cf.autoscaler</groupId>
             <artifactId>kafka</artifactId>
             <version>0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.cf.autoscaler</groupId>
+            <artifactId>elasticsearch-writer</artifactId>
+            <version>1.2.0</version>
         </dependency>
 
         <dependency>
