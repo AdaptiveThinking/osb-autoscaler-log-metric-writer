@@ -5,15 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.cf.autoscaler</groupId>
-    <artifactId>elasticsearch-writer</artifactId>
+    <artifactId>core</artifactId>
     <version>1.2.0</version>
     <packaging>jar</packaging>
-    <name>elasticsearch-writer</name>
-
-    <properties>
-        <messaging.version>1.2.0</messaging.version>
-        <prometheus.writer.version>1.2.0</prometheus.writer.version>
-    </properties>
+    <name>core</name>
 
     <parent>
         <groupId>de.evoila.cf.broker</groupId>
@@ -22,16 +17,44 @@
         <relativePath>../</relativePath>
     </parent>
 
+    <properties>
+        <messaging.version>1.2.0</messaging.version>
+        <elasticsearch.writer.version>1.2.0</elasticsearch.writer.version>
+        <prometheus.writer.version>1.2.0</prometheus.writer.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>de.cf.autoscaler</groupId>
             <artifactId>kafka</artifactId>
             <version>${messaging.version}</version>
         </dependency>
+        <dependency>
+            <groupId>de.cf.autoscaler</groupId>
+            <artifactId>elasticsearch-writer</artifactId>
+            <version>${elasticsearch.writer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.cf.autoscaler</groupId>
+            <artifactId>prometheus-writer</artifactId>
+            <version>${prometheus.writer.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.5.10.RELEASE</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -42,4 +65,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
