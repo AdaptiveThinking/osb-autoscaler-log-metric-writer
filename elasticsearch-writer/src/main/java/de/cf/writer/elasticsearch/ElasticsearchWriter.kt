@@ -1,18 +1,18 @@
 package de.cf.writer.elasticsearch
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.uuid.Generators
 import de.cf.autoscaler.kafka.KafkaPropertiesBean
 import de.cf.autoscaler.kafka.messages.LogMessage
 import de.cf.writer.elasticsearch.beans.ElasticsearchPropertiesBean
 import de.cf.writer.elasticsearch.kafka.LogMessageConsumer
-import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.settings.Settings
-import org.elasticsearch.common.transport.TransportAddress
-import org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder
-import org.elasticsearch.transport.client.PreBuiltTransportClient
+import de.cf.writer.elasticsearch.model.ElasticsearchWriterObject
+import org.apache.http.entity.ContentType
+import org.apache.http.nio.entity.NStringEntity
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import java.net.InetAddress
 import java.sql.Date
+import java.util.*
 import javax.annotation.PostConstruct
 
 
@@ -25,7 +25,10 @@ class ElasticsearchWriter @Autowired constructor(
         private val elasticsearchPropertiesBean: ElasticsearchPropertiesBean
 ){
 
-    private lateinit var connection: TransportClient
+    val mapper: ObjectMapper = ObjectMapper()
+
+    @Autowired
+    private lateinit var elasticsearchRestClientFactory: ElasticsearchRestClientFactory
 
     @PostConstruct
     fun executeElasticSearchWriter() {
@@ -38,27 +41,19 @@ class ElasticsearchWriter @Autowired constructor(
         logMessageConsumer.startConsumer()
     }
 
-    private fun connect(): TransportClient {
-        var settings: Settings = Settings.builder()
-                .put("cluster.name", elasticsearchPropertiesBean.clusterName)
-                .build()
-
-        connection = PreBuiltTransportClient(settings).addTransportAddress(
-                TransportAddress(InetAddress.getByName(elasticsearchPropertiesBean.host),
-                        elasticsearchPropertiesBean.port))
-
-        return connection
-    }
 
     fun writeLogMessage(data: LogMessage) {
-        val response = connect()
-                .prepareIndex(Date(data.timestamp).toString(),
-                        data.logMessageType,
-                        data.appId)
-                .setSource(jsonBuilder()
-                        .startObject()
-                        .field("message", data.logMessage)
-                        .endObject())
-                .get()
+
+        System.out.println("LOG HIER: " + data.logMessage)
+
+        var jsonString = mapper.writeValueAsString(ElasticsearchWriterObject(Date(data.timestamp),
+                data.logMessage, data.logMessageType, data.appId))
+
+        val entity = NStringEntity(jsonString, ContentType.APPLICATION_JSON)
+        var client = elasticsearchRestClientFactory.getRestClientConnection()
+
+        var endpoint = "/" + Date(data.timestamp).toString() + "/logMessages/" + Generators.randomBasedGenerator().generate()
+
+        client.performRequest("PUT", endpoint, Collections.emptyMap(), entity)
     }
 }

@@ -13,5 +13,11 @@ open class ElasticsearchPropertiesBean {
 
     var port: Int = 9300
 
-    lateinit var clusterName: String
+    var clusterName: String? = null
+
+    lateinit var scheme: String
+
+    lateinit var username: String
+
+    lateinit var password: String
 }
