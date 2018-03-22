@@ -8,7 +8,10 @@ import java.sql.Date
 class ElasticsearchWriterObject(val timestamp: Date,
                                 val logMessage: String,
                                 val logMessageType: String,
-                                val appId: String) {
+                                val appId: String,
+                                val appName: String,
+                                val space: String,
+                                val organization: String) {
 
 
 }

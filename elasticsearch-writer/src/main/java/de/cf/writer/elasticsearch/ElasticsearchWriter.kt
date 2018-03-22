@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.uuid.Generators
 import de.cf.autoscaler.kafka.KafkaPropertiesBean
 import de.cf.autoscaler.kafka.messages.LogMessage
-import de.cf.writer.elasticsearch.beans.ElasticsearchPropertiesBean
 import de.cf.writer.elasticsearch.kafka.LogMessageConsumer
 import de.cf.writer.elasticsearch.model.ElasticsearchWriterObject
 import org.apache.http.entity.ContentType
@@ -21,9 +20,7 @@ import javax.annotation.PostConstruct
  */
 @Component
 class ElasticsearchWriter @Autowired constructor(
-        private val kafkaPropertiesBean: KafkaPropertiesBean,
-        private val elasticsearchPropertiesBean: ElasticsearchPropertiesBean
-){
+        private val kafkaPropertiesBean: KafkaPropertiesBean){
 
     val mapper: ObjectMapper = ObjectMapper()
 
@@ -41,13 +38,10 @@ class ElasticsearchWriter @Autowired constructor(
         logMessageConsumer.startConsumer()
     }
 
-
     fun writeLogMessage(data: LogMessage) {
 
-        System.out.println("LOG HIER: " + data.logMessage)
-
         var jsonString = mapper.writeValueAsString(ElasticsearchWriterObject(Date(data.timestamp),
-                data.logMessage, data.logMessageType, data.appId))
+                data.logMessage, data.logMessageType, data.appId, data.appName, data.space, data.organization))
 
         val entity = NStringEntity(jsonString, ContentType.APPLICATION_JSON)
         var client = elasticsearchRestClientFactory.getRestClientConnection()
