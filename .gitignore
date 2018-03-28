@@ -2,3 +2,4 @@ prometheus-writer/target
 .idea/
 *.iml
 elasticsearch-writer/target
+core/target

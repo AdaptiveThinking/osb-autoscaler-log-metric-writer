@@ -5,10 +5,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.evoila.cf.broker</groupId>
-    <artifactId>elasticsearch-writer</artifactId>
+    <artifactId>core</artifactId>
     <version>1.2.0</version>
     <packaging>jar</packaging>
-    <name>elasticsearch-writer</name>
+    <name>core</name>
 
     <parent>
         <groupId>de.evoila.cf.broker</groupId>
@@ -19,26 +19,45 @@
 
     <properties>
         <messaging.version>1.2.0</messaging.version>
+        <elasticsearch.writer.version>1.2.0</elasticsearch.writer.version>
         <prometheus.writer.version>1.2.0</prometheus.writer.version>
-        <core.version>1.2.0</core.version>
-        <elasticsearch.version>6.2.2</elasticsearch.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>de.evoila.cf.broker</groupId>
             <artifactId>autoscaler-messaging</artifactId>
-            <version>${core.version}</version>
+            <version>${messaging.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-client</artifactId>
-            <version>6.2.2</version>
+            <groupId>de.evoila.cf.broker</groupId>
+            <artifactId>elasticsearch-writer</artifactId>
+            <version>${elasticsearch.writer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.evoila.cf.broker</groupId>
+            <artifactId>prometheus-writer</artifactId>
+            <version>${prometheus.writer.version}</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.5.10.RELEASE</version>
+                <configuration>
+                    <mainClass>de.evoila.cf.writer.WriterApp</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -49,4 +68,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
