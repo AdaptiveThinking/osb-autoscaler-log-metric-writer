@@ -1,26 +1,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>de.cf.autoscaler</groupId>
+    <modelVersion>4.0.0</modelVersion>
+	<groupId>de.evoila.cf.broker</groupId>
 	<artifactId>prometheus-writer</artifactId>
-	<version>0.1</version>
-	<packaging>jar</packaging>
+	<version>1.2.0</version>
+	<packaging>pom</packaging>
     <name>prometheus-writer</name>
 
     <parent>
         <groupId>de.evoila.cf.broker</groupId>
-        <artifactId>custom-parent</artifactId>
+        <artifactId>repo-parent</artifactId>
         <version>1.2.0</version>
         <relativePath>../</relativePath>
     </parent>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-        <kotlin.version>1.2.21</kotlin.version>
+        <core.version>1.2.0</core.version>
         <elasticsearch.version>6.2.2</elasticsearch.version>
     </properties>
 
@@ -31,15 +27,15 @@
         </dependency>
 
         <dependency>
-            <groupId>de.cf.autoscaler</groupId>
-            <artifactId>kafka</artifactId>
-            <version>0.1</version>
+            <groupId>de.evoila.cf.broker</groupId>
+            <artifactId>autoscaler-messaging</artifactId>
+            <version>${core.version}</version>
         </dependency>
 
         <dependency>
             <groupId>de.cf.autoscaler</groupId>
             <artifactId>elasticsearch-writer</artifactId>
-            <version>1.2.0</version>
+            <version>${core.version}</version>
         </dependency>
 
         <dependency>
@@ -105,72 +101,16 @@
         </dependency>
 
     </dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>1.5.6.RELEASE</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <jvmTarget>1.8</jvmTarget>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>testCompile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-	</build>
-    <repositories>
-        <repository>
-            <id>maven-central</id>
-            <name>Maven Central</name>
-            <url>http://central.maven.org/maven2/</url>
-        </repository>
-    </repositories>
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+        </plugin>
+    </plugins>
+</build>
 </project>

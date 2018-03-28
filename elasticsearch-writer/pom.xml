@@ -4,23 +4,23 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.cf.autoscaler</groupId>
+    <groupId>de.evoila.cf.broker</groupId>
     <artifactId>elasticsearch-writer</artifactId>
     <version>1.2.0</version>
     <packaging>jar</packaging>
     <name>elasticsearch-writer</name>
 
-    <properties>
-        <kotlin.version>1.2.30</kotlin.version>
-        <elasticsearch.version>6.2.2</elasticsearch.version>
-    </properties>
-
     <parent>
         <groupId>de.evoila.cf.broker</groupId>
-        <artifactId>custom-parent</artifactId>
+        <artifactId>repo-parent</artifactId>
         <version>1.2.0</version>
         <relativePath>../</relativePath>
     </parent>
+
+    <properties>
+        <core.version>1.2.0</core.version>
+        <elasticsearch.version>6.2.2</elasticsearch.version>
+    </properties>
 
     <dependencies>
 
@@ -37,9 +37,9 @@
         </dependency>
 
         <dependency>
-            <groupId>de.cf.autoscaler</groupId>
-            <artifactId>kafka</artifactId>
-            <version>0.1</version>
+            <groupId>de.evoila.cf.broker</groupId>
+            <artifactId>autoscaler-messaging</artifactId>
+            <version>${core.version}</version>
         </dependency>
 
         <dependency>

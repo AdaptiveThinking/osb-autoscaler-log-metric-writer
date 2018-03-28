@@ -8,7 +8,7 @@ spring:
     name: example-dev
 
 kafka:
-  host: 10.244.0.3
+  host: 10.244.0.7
   port: 9092
   metric_http_topic: metric_http
   metric_container_topic: metric_container
@@ -20,7 +20,7 @@ kafka:
   request_consumer_count: 0
 
 prometheus:
-  host: 10.244.0.6
+  host: 10.244.0.5
   port: 9091
   metric_http_measurement: metric_http
   metric_container_instance_measurement: metric_container_instance
@@ -31,6 +31,6 @@ prometheus:
     container: container
 
 elasticsearch:
-  host: 10.244.0.6
+  host: 10.244.0.3
   port: 9300
   cluster_name: elasticsearch-cluster

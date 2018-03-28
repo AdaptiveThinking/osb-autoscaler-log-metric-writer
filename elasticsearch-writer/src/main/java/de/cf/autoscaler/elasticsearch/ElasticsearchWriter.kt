@@ -2,13 +2,14 @@ package de.cf.autoscaler.elasticsearch
 
 import de.cf.autoscaler.elasticsearch.beans.ElasticsearchPropertiesBean
 import de.cf.autoscaler.elasticsearch.kafka.LogMessageConsumer
-import de.cf.autoscaler.kafka.KafkaPropertiesBean
-import de.cf.autoscaler.kafka.messages.LogMessage
+import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean
+
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.TransportAddress
 import org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder
 import org.elasticsearch.transport.client.PreBuiltTransportClient
+import org.jboss.logging.LogMessage
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.net.InetAddress
@@ -30,6 +31,7 @@ class ElasticsearchWriter @Autowired constructor(
     @PostConstruct
     fun executeElasticSearchWriter() {
         logMessageConsumerRunner()
+        connection = connect()
     }
 
     private fun logMessageConsumerRunner() {
@@ -51,7 +53,7 @@ class ElasticsearchWriter @Autowired constructor(
     }
 
     fun writeLogMessage(data: LogMessage) {
-        val response = connect()
+        val response = connection
                 .prepareIndex(Date(data.timestamp).toString(),
                         data.logMessageType,
                         data.appId)
