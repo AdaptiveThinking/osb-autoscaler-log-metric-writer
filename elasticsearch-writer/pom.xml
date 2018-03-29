@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.evoila.cf.broker</groupId>
+    <artifactId>elasticsearch-writer</artifactId>
+    <version>1.2.0</version>
+    <packaging>jar</packaging>
+    <name>elasticsearch-writer</name>
+
+    <parent>
+        <groupId>de.evoila.cf.broker</groupId>
+        <artifactId>repo-parent</artifactId>
+        <version>1.2.0</version>
+        <relativePath>../</relativePath>
+    </parent>
+
+    <properties>
+        <messaging.version>1.2.0</messaging.version>
+        <prometheus.writer.version>1.2.0</prometheus.writer.version>
+        <core.version>1.2.0</core.version>
+        <elasticsearch.version>6.2.2</elasticsearch.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>de.evoila.cf.broker</groupId>
+            <artifactId>autoscaler-messaging</artifactId>
+            <version>${core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client</artifactId>
+            <version>6.2.2</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

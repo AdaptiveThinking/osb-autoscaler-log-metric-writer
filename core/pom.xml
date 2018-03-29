@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.evoila.cf.broker</groupId>
+    <artifactId>core</artifactId>
+    <version>1.2.0</version>
+    <packaging>jar</packaging>
+    <name>core</name>
+
+    <parent>
+        <groupId>de.evoila.cf.broker</groupId>
+        <artifactId>repo-parent</artifactId>
+        <version>1.2.0</version>
+        <relativePath>../</relativePath>
+    </parent>
+
+    <properties>
+        <messaging.version>1.2.0</messaging.version>
+        <elasticsearch.writer.version>1.2.0</elasticsearch.writer.version>
+        <prometheus.writer.version>1.2.0</prometheus.writer.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>de.evoila.cf.broker</groupId>
+            <artifactId>autoscaler-messaging</artifactId>
+            <version>${messaging.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.evoila.cf.broker</groupId>
+            <artifactId>elasticsearch-writer</artifactId>
+            <version>${elasticsearch.writer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.evoila.cf.broker</groupId>
+            <artifactId>prometheus-writer</artifactId>
+            <version>${prometheus.writer.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.5.10.RELEASE</version>
+                <configuration>
+                    <mainClass>de.evoila.cf.writer.WriterApp</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
