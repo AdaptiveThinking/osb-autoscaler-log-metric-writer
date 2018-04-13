@@ -7,7 +7,7 @@
 	<artifactId>repo-parent</artifactId>
 	<version>1.2.0</version>
 	<packaging>pom</packaging>
-	<name>custom-parent</name>
+	<name>repo-parent</name>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -26,7 +26,7 @@
     </properties>
 
 	<modules>
-		<module>messaging</module>
+		<module>osb-autoscaler-messaging</module>
 		<module>prometheus-writer</module>
 		<module>elasticsearch-writer</module>
 		<module>core</module>
