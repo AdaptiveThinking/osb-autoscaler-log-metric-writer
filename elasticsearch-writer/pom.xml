@@ -27,7 +27,7 @@
     <dependencies>
         <dependency>
             <groupId>de.evoila.cf.broker</groupId>
-            <artifactId>autoscaler-messaging</artifactId>
+            <artifactId>osb-autoscaler-messaging</artifactId>
             <version>${core.version}</version>
         </dependency>
         <dependency>
