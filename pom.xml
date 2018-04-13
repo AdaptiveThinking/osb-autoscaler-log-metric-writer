@@ -27,8 +27,8 @@
 
 	<modules>
 		<module>osb-autoscaler-messaging</module>
-		<module>prometheus-writer</module>
-		<module>elasticsearch-writer</module>
+        <module>elasticsearch-writer</module>
+        <module>prometheus-writer</module>
 		<module>core</module>
 	</modules>
 
