@@ -46,7 +46,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>1.5.10.RELEASE</version>
                 <configuration>
                     <mainClass>de.evoila.cf.writer.WriterApp</mainClass>
                 </configuration>
