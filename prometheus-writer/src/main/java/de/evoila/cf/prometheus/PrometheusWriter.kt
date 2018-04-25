@@ -13,7 +13,7 @@ import de.evoila.cf.prometheus.writer.constants.ScalingFields
 import de.evoila.cf.prometheus.writer.kafka.ApplicationMetricConsumer
 import de.evoila.cf.prometheus.writer.kafka.InstanceMetricConsumer
 import de.evoila.cf.prometheus.writer.kafka.ScalingLogConsumer
-import de.evoila.cf.prometheus.writers.kafka.HttpMetricConsumer
+import de.evoila.cf.prometheus.writer.kafka.HttpMetricConsumer
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.Gauge
 import io.prometheus.client.exporter.PushGateway

@@ -1,4 +1,4 @@
-package de.evoila.cf.prometheus.writers.kafka
+package de.evoila.cf.prometheus.writer.kafka
 
 import com.google.protobuf.InvalidProtocolBufferException
 

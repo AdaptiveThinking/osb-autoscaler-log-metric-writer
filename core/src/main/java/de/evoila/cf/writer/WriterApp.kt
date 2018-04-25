@@ -1,4 +1,4 @@
-package de.evoila.cf.autoscaler
+package de.evoila.cf.writer
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger

@@ -1,4 +1,4 @@
-package de.evoila.cf.autoscaler.configuration
+package de.evoila.cf.writer.configuration
 
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean
 import de.evoila.cf.elasticsearch.writer.beans.ElasticsearchPropertiesBean
