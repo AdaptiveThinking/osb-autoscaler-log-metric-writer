@@ -40,7 +40,7 @@ class ElasticsearchWriter @Autowired constructor(
 
     fun writeLogMessage(data: LogMessage) {
 
-        var jsonString = mapper.writeValueAsString(ElasticsearchWriterObject(Date(data.timestamp),
+        var jsonString = mapper.writeValueAsString(ElasticsearchWriterObject(data.timestamp,
                 data.logMessage, data.logMessageType, data.appId, data.appName, data.space, data.organization))
 
         val entity = NStringEntity(jsonString, ContentType.APPLICATION_JSON)
