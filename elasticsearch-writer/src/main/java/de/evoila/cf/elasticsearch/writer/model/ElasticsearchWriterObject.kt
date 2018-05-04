@@ -6,6 +6,7 @@ package de.evoila.cf.elasticsearch.writer.model
 class ElasticsearchWriterObject(val timestamp: Long,
                                 val logMessage: String,
                                 val logMessageType: String,
+                                val sourceType: String,
                                 val appId: String,
                                 val appName: String,
                                 val space: String,
