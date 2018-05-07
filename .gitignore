@@ -3,3 +3,4 @@ prometheus-writer/target
 *.iml
 elasticsearch-writer/target
 core/target
+manifest.yml

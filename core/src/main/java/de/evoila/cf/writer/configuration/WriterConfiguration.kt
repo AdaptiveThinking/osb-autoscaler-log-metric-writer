@@ -9,6 +9,5 @@ import org.springframework.context.annotation.PropertySource
 
 @Configuration
 @EnableConfigurationProperties(PrometheusPropertiesBean::class, KafkaPropertiesBean::class, ElasticsearchPropertiesBean::class)
-@PropertySource("classpath:/application.yml")
 open class WriterConfiguration {
 }
