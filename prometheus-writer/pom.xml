@@ -6,7 +6,7 @@
 	<groupId>de.evoila.cf.broker</groupId>
 	<artifactId>prometheus-writer</artifactId>
 	<version>1.2.0</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
     <name>prometheus-writer</name>
 
     <parent>
@@ -79,14 +79,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>
