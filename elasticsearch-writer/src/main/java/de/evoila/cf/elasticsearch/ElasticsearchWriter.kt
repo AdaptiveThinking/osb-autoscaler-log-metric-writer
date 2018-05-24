@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.uuid.Generators
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean
 import de.evoila.cf.autoscaler.kafka.messages.LogMessage
+import de.evoila.cf.elasticsearch.writer.connection.ElasticsearchRestClientFactory
 import de.evoila.cf.elasticsearch.writer.kafka.LogMessageConsumer
 import de.evoila.cf.elasticsearch.writer.model.ElasticsearchWriterObject
 import org.apache.http.entity.ContentType
