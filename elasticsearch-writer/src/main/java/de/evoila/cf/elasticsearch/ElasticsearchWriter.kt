@@ -24,9 +24,12 @@ class ElasticsearchWriter @Autowired constructor(
         private val kafkaPropertiesBean: KafkaPropertiesBean){
 
     val mapper: ObjectMapper = ObjectMapper()
+    lateinit var writerObject: ElasticsearchWriterObject
 
     @Autowired
     private lateinit var elasticsearchRestClientFactory: ElasticsearchRestClientFactory
+
+    var writerObjectMap = hashMapOf<String, ElasticsearchWriterObject>()
 
     @PostConstruct
     fun executeElasticSearchWriter() {
@@ -40,15 +43,31 @@ class ElasticsearchWriter @Autowired constructor(
     }
 
     fun writeLogMessage(data: LogMessage) {
+        if(!data.logMessage.startsWith("\t")) {
+            var jsonString = mapper.writeValueAsString(writerObjectMap[data.appId].let { it })
+            writerObjectMap.remove(data.appId)
 
-        var jsonString = mapper.writeValueAsString(ElasticsearchWriterObject(data.timestamp,
-                data.logMessage, data.logMessageType, data.sourceType, data.appId, data.appName, data.space, data.organization))
+            if(jsonString != "null") {
+                val entity = NStringEntity(jsonString, ContentType.APPLICATION_JSON)
+                var client = elasticsearchRestClientFactory.getRestClientConnection()
 
-        val entity = NStringEntity(jsonString, ContentType.APPLICATION_JSON)
-        var client = elasticsearchRestClientFactory.getRestClientConnection()
+                var endpoint = "/" + Date(data.timestamp).toString() + "/logMessages/" + Generators.randomBasedGenerator().generate()
 
-        var endpoint = "/" + Date(data.timestamp).toString() + "/logMessages/" + Generators.randomBasedGenerator().generate()
+                client.performRequest("PUT", endpoint, Collections.emptyMap(), entity)
+            }
 
-        client.performRequest("PUT", endpoint, Collections.emptyMap(), entity)
+            writerObject = ElasticsearchWriterObject(data.timestamp, data.logMessage, data.logMessageType, data.sourceType,
+                    data.appId, data.appName, data.space, data.organization)
+
+            writerObjectMap[writerObject.appId] = writerObject
+
+        } else {
+            if(writerObjectMap.containsKey(data.appId)) {
+                var tmpWriterObject = writerObjectMap.getValue(data.appId)
+                tmpWriterObject.logMessage += "\n"
+                tmpWriterObject.logMessage += data.logMessage
+                writerObjectMap[data.appId] = tmpWriterObject
+            }
+        }
     }
 }
