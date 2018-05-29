@@ -23,6 +23,4 @@ class GrokPatternMatcher(grokPatternBean: GrokPatternBean){
 
         return match.capture().minus("PORT")
     }
-
-
 }
