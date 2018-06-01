@@ -11,9 +11,9 @@ import de.evoila.cf.prometheus.writer.constants.HttpMetricFields
 import de.evoila.cf.prometheus.writer.constants.InstanceMetricFields
 import de.evoila.cf.prometheus.writer.constants.ScalingFields
 import de.evoila.cf.prometheus.writer.kafka.ApplicationMetricConsumer
+import de.evoila.cf.prometheus.writer.kafka.HttpMetricConsumer
 import de.evoila.cf.prometheus.writer.kafka.InstanceMetricConsumer
 import de.evoila.cf.prometheus.writer.kafka.ScalingLogConsumer
-import de.evoila.cf.prometheus.writer.kafka.HttpMetricConsumer
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.Gauge
 import io.prometheus.client.exporter.PushGateway
@@ -54,7 +54,7 @@ class PrometheusWriter @Autowired constructor(
 
     private fun instanceContainerMetricsGauge(instanceMetricFields: InstanceMetricFields): Gauge {
         return Gauge.build(instanceMetricFields.instanceMetric, DESCRIPTION)
-                .labelNames(APP_INSTANCE, APP_ID_LABEL_NAME)
+                .labelNames(APP_INSTANCE, APP_ID_LABEL_NAME, APP_NAME_LABEL_NAME, APP_SPACE_LABEL_NAME)
                 .register(instanceContainerRegistry)
     }
     /**
@@ -122,6 +122,8 @@ class PrometheusWriter @Autowired constructor(
         const val DESCRIPTION = "None"
         const val COMPONENT_LABEL_NAME = "component"
         const val APP_ID_LABEL_NAME = "app_id"
+        const val APP_NAME_LABEL_NAME = "app_name"
+        const val APP_SPACE_LABEL_NAME = "space"
         const val APP_INSTANCE = "app_instance"
     }
 
@@ -174,9 +176,9 @@ class PrometheusWriter @Autowired constructor(
 
     // Todo: Ask Marius why this is there?
     fun writeInstanceContainerMetric(data: ContainerMetric) {
-        cpuInstanceGauge.labels(data.instanceIndex.toString(), data.appId)
+        cpuInstanceGauge.labels(data.instanceIndex.toString(), data.appId, data.appName, data.space)
                 .set(data.cpu.toDouble())
-        ramInstanceGauge.labels(data.instanceIndex.toString(), data.appId)
+        ramInstanceGauge.labels(data.instanceIndex.toString(), data.appId, data.appName, data.space)
                 .set(data.ram.toDouble())
 
         pushGateway.pushAdd(instanceContainerRegistry, "instance_container_metrics")
