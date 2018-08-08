@@ -4,6 +4,7 @@ package de.evoila.cf.elasticsearch.writer.model
  * Created by reneschollmeyer, evoila on 19.03.18.
  */
 class ElasticsearchWriterObject(val timestamp: Long,
+                                val latency: Long,
                                 var logMessage: String,
                                 val logMessageType: String,
                                 val sourceType: String,

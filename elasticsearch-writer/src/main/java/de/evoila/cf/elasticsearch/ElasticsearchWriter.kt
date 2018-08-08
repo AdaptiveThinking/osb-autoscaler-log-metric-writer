@@ -69,10 +69,10 @@ class ElasticsearchWriter @Autowired constructor(
             }
 
             writerObject = if(matchMap != null && !matchMap.isEmpty()) {
-                ElasticsearchWriterObject(data.timestamp, JsonBuilder(matchMap).toPrettyString().replace("\\", ""), data.logMessageType, data.sourceType,
+                ElasticsearchWriterObject(data.timestamp, System.currentTimeMillis() - data.timestamp, JsonBuilder(matchMap).toPrettyString().replace("\\", ""), data.logMessageType, data.sourceType,
                         data.appId, data.appName, data.space, data.organization)
             } else {
-                ElasticsearchWriterObject(data.timestamp, data.logMessage, data.logMessageType, data.sourceType,
+                ElasticsearchWriterObject(data.timestamp, System.currentTimeMillis() - data.timestamp, data.logMessage, data.logMessageType, data.sourceType,
                         data.appId, data.appName, data.space, data.organization)
             }
 
