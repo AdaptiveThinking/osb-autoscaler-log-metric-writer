@@ -11,7 +11,8 @@ class ElasticsearchWriterObject(val timestamp: Long,
                                 val appId: String,
                                 val appName: String,
                                 val space: String,
-                                val organization: String) {
+                                val organization: String,
+                                val sourceInstance: String) {
 
 
 }
