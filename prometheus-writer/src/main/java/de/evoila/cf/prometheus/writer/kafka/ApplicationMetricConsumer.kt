@@ -28,7 +28,7 @@ class ApplicationMetricConsumer(val groupId: String, val kafkaPropertiesBean: Ka
     override fun consume(bytes: ByteArray) {
         try {
             val metric = ApplicationMetric(ProtoApplicationMetric.parseFrom(bytes))
-            writer.writeApplicationContainerMetric(metric)
+            //writer.writeApplicationContainerMetric(metric)
 
         } catch (e: InvalidProtocolBufferException) {
             e.printStackTrace()

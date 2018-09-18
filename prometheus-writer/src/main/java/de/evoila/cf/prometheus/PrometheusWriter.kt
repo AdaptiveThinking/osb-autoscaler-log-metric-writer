@@ -1,7 +1,6 @@
 package de.evoila.cf.prometheus
 
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean
-import de.evoila.cf.autoscaler.kafka.messages.ApplicationMetric
 import de.evoila.cf.autoscaler.kafka.messages.ContainerMetric
 import de.evoila.cf.autoscaler.kafka.messages.HttpMetric
 import de.evoila.cf.autoscaler.kafka.messages.ScalingLog
@@ -54,7 +53,7 @@ class PrometheusWriter @Autowired constructor(
 
     private fun instanceContainerMetricsGauge(instanceMetricFields: InstanceMetricFields): Gauge {
         return Gauge.build(instanceMetricFields.instanceMetric, DESCRIPTION)
-                .labelNames(APP_INSTANCE, APP_ID_LABEL_NAME, APP_NAME_LABEL_NAME, APP_SPACE_LABEL_NAME)
+                .labelNames(APP_INSTANCE, APP_ID_LABEL_NAME, APP_NAME_LABEL_NAME, APP_SPACE_LABEL_NAME, APP_ORG_GUID_LABEL_NAME)
                 .register(instanceContainerRegistry)
     }
     /**
@@ -124,6 +123,7 @@ class PrometheusWriter @Autowired constructor(
         const val APP_ID_LABEL_NAME = "app_id"
         const val APP_NAME_LABEL_NAME = "app_name"
         const val APP_SPACE_LABEL_NAME = "space"
+        const val APP_ORG_GUID_LABEL_NAME = "organization_guid"
         const val APP_INSTANCE = "app_instance"
     }
 
@@ -176,15 +176,15 @@ class PrometheusWriter @Autowired constructor(
 
     // Todo: Ask Marius why this is there?
     fun writeInstanceContainerMetric(data: ContainerMetric) {
-        cpuInstanceGauge.labels(data.instanceIndex.toString(), data.appId, data.appName, data.space)
+        cpuInstanceGauge.labels(data.instanceIndex.toString(), data.appId, data.appName, data.space, data.organization_guid)
                 .set(data.cpu.toDouble())
-        ramInstanceGauge.labels(data.instanceIndex.toString(), data.appId, data.appName, data.space)
+        ramInstanceGauge.labels(data.instanceIndex.toString(), data.appId, data.appName, data.space, data.organization_guid)
                 .set(data.ram.toDouble())
 
         pushGateway.pushAdd(instanceContainerRegistry, "instance_container_metrics")
     }
 
-    fun writeApplicationContainerMetric(data: ApplicationMetric) {
+    /*fun writeApplicationContainerMetric(data: ApplicationMetric) {
         cpuGauge.labels(data.appId)
                 .set(data.cpu.toDouble())
         ramGauge.labels(data.appId)
@@ -199,7 +199,7 @@ class PrometheusWriter @Autowired constructor(
                 .set(data.quotient.toDouble())
 
         pushGateway.pushAdd(containerMetricRegistry, "application_container_metrics")
-    }
+    }*/
 
     fun writeScalingLog(data: ScalingLog) {
         // Todo: Ask Marius what measurement is about and where the value should be stored
