@@ -20,7 +20,7 @@
         <kotlin.version>1.2.60</kotlin.version>
         <core.version>1.2.0</core.version>
         <spring-cloud.version>Finchley.RELEASE</spring-cloud.version>
-        <elasticsearch.version>6.2.2</elasticsearch.version>
+        <elasticsearch.version>6.5.4</elasticsearch.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -29,7 +29,6 @@
 	<modules>
 		<module>osb-autoscaler-messaging</module>
         <module>elasticsearch-writer</module>
-        <module>prometheus-writer</module>
 		<module>core</module>
 	</modules>
 

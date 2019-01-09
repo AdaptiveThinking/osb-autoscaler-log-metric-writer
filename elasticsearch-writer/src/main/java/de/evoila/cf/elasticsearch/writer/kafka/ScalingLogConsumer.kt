@@ -4,21 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import de.evoila.cf.autoscaler.kafka.AutoScalerConsumer
 import de.evoila.cf.autoscaler.kafka.ByteConsumerThread
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean
-import de.evoila.cf.autoscaler.kafka.messages.LogMessage
+import de.evoila.cf.autoscaler.kafka.messages.ScalingLog
 import de.evoila.cf.elasticsearch.ElasticsearchWriter
 
-
-/**
- * Created by reneschollmeyer, evoila on 07.03.18.
- */
-class LogMessageConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBean,
+class ScalingLogConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBean,
                          private val writer: ElasticsearchWriter) : AutoScalerConsumer {
 
-    private val consThread: ByteConsumerThread = ByteConsumerThread(kafkaPropertiesBean.logMessageTopic,
+    private val consThread: ByteConsumerThread = ByteConsumerThread(kafkaPropertiesBean.scalingTopic,
             groupId,
             kafkaPropertiesBean.host,
-            kafkaPropertiesBean.port,
-            this)
+            kafkaPropertiesBean.port, this)
 
     override fun startConsumer() {
         consThread.start()
@@ -28,12 +23,13 @@ class LogMessageConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBe
         consThread.kafkaConsumer.wakeup()
     }
 
-    override fun consume(bytes: ByteArray?) {
-        val logMessage = ObjectMapper().readValue(bytes, LogMessage::class.java)
-        writer.writeLogMessage(logMessage, "logmessages")
+    override fun consume(bytes: ByteArray) {
+        val scalingLog = ObjectMapper().readValue(bytes, ScalingLog::class.java)
+        writer.writeScalingLog(scalingLog, "scalinglogs")
     }
 
     override fun getType(): String {
-        return "log_messages"
+        return "quotient"
     }
+
 }
