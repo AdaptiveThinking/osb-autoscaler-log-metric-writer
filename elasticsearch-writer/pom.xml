@@ -18,7 +18,6 @@
 
     <properties>
         <messaging.version>1.2.0</messaging.version>
-        <prometheus.writer.version>1.2.0</prometheus.writer.version>
         <core.version>1.2.0</core.version>
         <elasticsearch.version>6.2.2</elasticsearch.version>
     </properties>
