@@ -20,14 +20,13 @@
     <properties>
         <core.version>1.2.0</core.version>
         <messaging.version>1.2.0</messaging.version>
-        <elasticsearch.writer.version>1.2.0</elasticsearch.writer.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>de.evoila.cf.broker</groupId>
             <artifactId>osb-autoscaler-messaging</artifactId>
-            <version>${messaging.version}</version>
+            <version>${core.version}</version>
         </dependency>
         <dependency>
             <groupId>de.evoila.cf.broker</groupId>
