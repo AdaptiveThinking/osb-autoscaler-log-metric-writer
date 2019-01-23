@@ -12,8 +12,8 @@ class HttpMetricConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBe
 
     private val consThread: ByteConsumerThread = ByteConsumerThread(kafkaPropertiesBean.metricHttpTopic,
             groupId,
-            kafkaPropertiesBean.host,
-            kafkaPropertiesBean.port, this)
+            this,
+            kafkaPropertiesBean)
 
     override fun startConsumer() {
         consThread.start()

@@ -16,9 +16,8 @@ class LogMessageConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBe
 
     private val consThread: ByteConsumerThread = ByteConsumerThread(kafkaPropertiesBean.logMessageTopic,
             groupId,
-            kafkaPropertiesBean.host,
-            kafkaPropertiesBean.port,
-            this)
+            this,
+            kafkaPropertiesBean)
 
     override fun startConsumer() {
         consThread.start()

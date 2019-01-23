@@ -12,8 +12,8 @@ class ScalingLogConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBe
 
     private val consThread: ByteConsumerThread = ByteConsumerThread(kafkaPropertiesBean.scalingTopic,
             groupId,
-            kafkaPropertiesBean.host,
-            kafkaPropertiesBean.port, this)
+            this,
+            kafkaPropertiesBean)
 
     override fun startConsumer() {
         consThread.start()
@@ -29,7 +29,7 @@ class ScalingLogConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBe
     }
 
     override fun getType(): String {
-        return "quotient"
+        return "scaling"
     }
 
 }

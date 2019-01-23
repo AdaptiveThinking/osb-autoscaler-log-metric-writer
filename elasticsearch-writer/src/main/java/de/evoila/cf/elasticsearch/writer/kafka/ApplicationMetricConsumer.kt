@@ -12,8 +12,8 @@ class ApplicationMetricConsumer(groupId: String, kafkaPropertiesBean: KafkaPrope
 
     private val consThread: ByteConsumerThread = ByteConsumerThread(kafkaPropertiesBean.metricApplicationTopic,
             groupId,
-            kafkaPropertiesBean.host,
-            kafkaPropertiesBean.port, this)
+            this,
+            kafkaPropertiesBean)
 
     override fun startConsumer() {
         consThread.start()
@@ -29,7 +29,7 @@ class ApplicationMetricConsumer(groupId: String, kafkaPropertiesBean: KafkaPrope
     }
 
     override fun getType(): String {
-        return "metric_container_application"
+        return "metric_application"
     }
 
 }
