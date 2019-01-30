@@ -10,10 +10,7 @@ import de.evoila.cf.elasticsearch.security.ElasticsearchPortAvailabilityVerifier
 import de.evoila.cf.elasticsearch.writer.beans.ElasticsearchPropertiesBean
 import de.evoila.cf.elasticsearch.writer.beans.GrokPatternBean
 import de.evoila.cf.elasticsearch.writer.connection.ElasticsearchRestClientFactory
-import de.evoila.cf.elasticsearch.writer.kafka.ContainerMetricConsumer
-import de.evoila.cf.elasticsearch.writer.kafka.HttpMetricConsumer
-import de.evoila.cf.elasticsearch.writer.kafka.LogMessageConsumer
-import de.evoila.cf.elasticsearch.writer.kafka.ScalingLogConsumer
+import de.evoila.cf.elasticsearch.writer.kafka.*
 import de.evoila.cf.elasticsearch.writer.model.GrokPatternMatcher
 import groovy.json.JsonBuilder
 import org.apache.http.entity.ContentType
@@ -74,6 +71,10 @@ class ElasticsearchWriter @Autowired constructor(
         val httpMetricConsumer = HttpMetricConsumer("writer_http_metrics",
                 kafkaPropertiesBean, this)
         httpMetricConsumer.startConsumer()
+
+        val serverConfigConsumer = ServerConfigConsumer("server_config",
+                kafkaPropertiesBean, this)
+        serverConfigConsumer.startConsumer()
     }
 
     fun writeLogMessage(data: LogMessage, indexName: String) {
@@ -129,6 +130,16 @@ class ElasticsearchWriter @Autowired constructor(
         val entity = NStringEntity(jsonString, ContentType.APPLICATION_JSON)
 
         var endpoint = "/${Date(data.timestamp)}-$indexName/_doc/${Generators.randomBasedGenerator().generate()}"
+
+        performRequest("PUT", endpoint, entity)
+    }
+
+    fun writeJson(bytes: ByteArray, indexName: String) {
+        var jsonString = String(bytes)
+
+        val entity = NStringEntity(jsonString, ContentType.APPLICATION_JSON)
+
+        var endpoint = "/$indexName/_doc/${Generators.randomBasedGenerator().generate()}"
 
         performRequest("PUT", endpoint, entity)
     }
