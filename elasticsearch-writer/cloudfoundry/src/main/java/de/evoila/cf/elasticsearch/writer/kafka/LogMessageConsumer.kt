@@ -35,4 +35,6 @@ class LogMessageConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBe
     override fun getType(): String {
         return "log_messages"
     }
+
+    override fun removeConsumer(topicName: String?) {}
 }

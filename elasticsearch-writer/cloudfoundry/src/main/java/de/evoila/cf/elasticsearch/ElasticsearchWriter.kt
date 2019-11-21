@@ -22,6 +22,7 @@ import org.elasticsearch.client.Request
 import org.elasticsearch.client.RestClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import java.sql.Date
 import java.util.concurrent.Semaphore
@@ -32,6 +33,7 @@ import javax.annotation.PostConstruct
  * Created by reneschollmeyer, evoila on 07.03.18.
  */
 @Component
+@ConditionalOnProperty(prefix = "platform", name = ["name"], havingValue = "cloudfoundry")
 class ElasticsearchWriter @Autowired constructor(
         private val kafkaPropertiesBean: KafkaPropertiesBean,
         grokPatternBean: GrokPatternBean,
@@ -78,7 +80,7 @@ class ElasticsearchWriter @Autowired constructor(
 
     fun writeLogMessage(data: LogMessage, indexName: String) {
         if(!data.logMessage.startsWith("\t")) {
-            var jsonString = mapper.writeValueAsString(writerObjectMap[data.appId].let { it })
+            val jsonString = mapper.writeValueAsString(writerObjectMap[data.appId].let { it })
             writerObjectMap.remove(data.appId)
 
             if(jsonString != "null") {
@@ -95,7 +97,7 @@ class ElasticsearchWriter @Autowired constructor(
                 null
             }
 
-            writerObject = if(matchMap != null && !matchMap.isEmpty()) {
+            writerObject = if(matchMap != null && matchMap.isNotEmpty()) {
                 LogMessage(data.timestamp, JsonBuilder(matchMap).toPrettyString().replace("\\", ""), data.logMessageType, data.sourceType,
                         data.appId, data.appName, data.space, data.organization, data.organizationGuid, data.sourceInstance)
             } else {
@@ -106,7 +108,7 @@ class ElasticsearchWriter @Autowired constructor(
 
         } else {
             if(writerObjectMap.containsKey(data.appId)) {
-                var tmpWriterObject = writerObjectMap.getValue(data.appId)
+                val tmpWriterObject = writerObjectMap.getValue(data.appId)
                 tmpWriterObject.logMessage += "\n" + data.logMessage
                 writerObjectMap[data.appId] = tmpWriterObject
             }
@@ -114,7 +116,7 @@ class ElasticsearchWriter @Autowired constructor(
     }
 
     fun writeScalingLog(data: ScalingLog, indexName: String) {
-        var jsonString = mapper.writeValueAsString(data)
+        val jsonString = mapper.writeValueAsString(data)
 
         val entity = NStringEntity(jsonString, ContentType.APPLICATION_JSON)
 
@@ -124,7 +126,7 @@ class ElasticsearchWriter @Autowired constructor(
     }
 
     fun writeMetric(data: AutoscalerMetric, indexName: String) {
-        var jsonString = mapper.writeValueAsString(data)
+        val jsonString = mapper.writeValueAsString(data)
 
         val entity = NStringEntity(jsonString, ContentType.APPLICATION_JSON)
 
@@ -134,7 +136,7 @@ class ElasticsearchWriter @Autowired constructor(
     }
 
     private fun performRequest(httpMethod: String, endpoint: String, entity: NStringEntity) {
-        var request = Request(httpMethod, endpoint)
+        val request = Request(httpMethod, endpoint)
         request.apply {
             this.entity = entity
         }
@@ -149,7 +151,7 @@ class ElasticsearchWriter @Autowired constructor(
 
                 log.info("Trying to reconnect Elasticsearch, attempt: " + (i+1))
 
-                var available = availabilityVerifier
+                val available = availabilityVerifier
                         .verifyServiceAvailability(elasticsearchProperties.host, elasticsearchProperties.port, true)
 
                 if(available) {

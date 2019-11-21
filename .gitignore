@@ -4,3 +4,7 @@ prometheus-writer/target
 elasticsearch-writer/target
 core/target
 manifest.yml
+*.jar
+elasticsearch-writer/cloudfoundry/target
+elasticsearch-writer/shared/target
+elasticsearch-writer/timag/target

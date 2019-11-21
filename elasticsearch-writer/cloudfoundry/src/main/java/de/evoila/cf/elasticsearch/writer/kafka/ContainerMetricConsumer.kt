@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import de.evoila.cf.autoscaler.kafka.AutoScalerConsumer
 import de.evoila.cf.autoscaler.kafka.ByteConsumerThread
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean
-import de.evoila.cf.autoscaler.kafka.messages.ScalingLog
+import de.evoila.cf.autoscaler.kafka.messages.ContainerMetric
 import de.evoila.cf.elasticsearch.ElasticsearchWriter
 
-class ScalingLogConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBean,
-                         private val writer: ElasticsearchWriter) : AutoScalerConsumer {
+class ContainerMetricConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBean,
+                              private val writer: ElasticsearchWriter) : AutoScalerConsumer {
 
-    private val consThread: ByteConsumerThread = ByteConsumerThread(kafkaPropertiesBean.scalingTopic,
+    private val consThread: ByteConsumerThread = ByteConsumerThread(kafkaPropertiesBean.metricContainerTopic,
             groupId,
             this,
             kafkaPropertiesBean)
@@ -24,12 +24,13 @@ class ScalingLogConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBe
     }
 
     override fun consume(bytes: ByteArray) {
-        val scalingLog = ObjectMapper().readValue(bytes, ScalingLog::class.java)
-        writer.writeScalingLog(scalingLog, "scalinglogs")
+        val metric = ObjectMapper().readValue(bytes, ContainerMetric::class.java)
+        writer.writeMetric(metric, "containermetrics")
     }
 
     override fun getType(): String {
-        return "scaling"
+        return "logMetric_metric_container"
     }
 
+    override fun removeConsumer(topicName: String?) {}
 }

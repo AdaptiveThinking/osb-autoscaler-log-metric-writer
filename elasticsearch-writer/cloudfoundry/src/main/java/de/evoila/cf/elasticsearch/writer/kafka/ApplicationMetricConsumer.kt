@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import de.evoila.cf.autoscaler.kafka.AutoScalerConsumer
 import de.evoila.cf.autoscaler.kafka.ByteConsumerThread
 import de.evoila.cf.autoscaler.kafka.KafkaPropertiesBean
-import de.evoila.cf.autoscaler.kafka.messages.HttpMetric
+import de.evoila.cf.autoscaler.kafka.messages.ApplicationMetric
 import de.evoila.cf.elasticsearch.ElasticsearchWriter
 
-class HttpMetricConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBean,
-                         private val writer: ElasticsearchWriter) : AutoScalerConsumer {
+class ApplicationMetricConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBean,
+                                private val writer: ElasticsearchWriter) : AutoScalerConsumer {
 
-    private val consThread: ByteConsumerThread = ByteConsumerThread(kafkaPropertiesBean.metricHttpTopic,
+    private val consThread: ByteConsumerThread = ByteConsumerThread(kafkaPropertiesBean.metricApplicationTopic,
             groupId,
             this,
             kafkaPropertiesBean)
@@ -24,12 +24,13 @@ class HttpMetricConsumer(groupId: String, kafkaPropertiesBean: KafkaPropertiesBe
     }
 
     override fun consume(bytes: ByteArray) {
-        val metric = ObjectMapper().readValue(bytes, HttpMetric::class.java)
-        writer.writeMetric(metric, "httpmetrics")
+        val metric = ObjectMapper().readValue(bytes, ApplicationMetric::class.java)
+        writer.writeMetric(metric, "applicationmetrics")
     }
 
     override fun getType(): String {
-        return "metric_http"
+        return "metric_application"
     }
 
+    override fun removeConsumer(topicName: String?) {}
 }

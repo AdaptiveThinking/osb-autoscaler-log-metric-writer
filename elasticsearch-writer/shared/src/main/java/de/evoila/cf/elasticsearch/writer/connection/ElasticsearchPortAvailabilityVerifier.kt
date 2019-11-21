@@ -44,7 +44,7 @@ class ElasticsearchPortAvailabilityVerifier {
 
             timeout(SOCKET_TIMEOUT)
         } finally {
-            if (socket != null && socket.isConnected) {
+            if (socket.isConnected) {
                 try {
                     socket.close()
                 } catch (e: IOException) {
