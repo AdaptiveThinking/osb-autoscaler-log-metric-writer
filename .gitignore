@@ -8,3 +8,4 @@ manifest.yml
 elasticsearch-writer/cloudfoundry/target
 elasticsearch-writer/shared/target
 elasticsearch-writer/timag/target
+manifest*

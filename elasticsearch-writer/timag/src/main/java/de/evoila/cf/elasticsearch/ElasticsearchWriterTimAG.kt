@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.Semaphore
 import javax.annotation.PostConstruct
 
@@ -42,8 +44,9 @@ class ElasticsearchWriterTimAG @Autowired constructor(
         var jsonString = String(bytes)
 
         val entity = NStringEntity(jsonString, ContentType.APPLICATION_JSON)
+        val timestamp = SimpleDateFormat("yyyy-MM-dd").format(Date())
 
-        var endpoint = "/$indexName/_doc/${Generators.randomBasedGenerator().generate()}"
+        var endpoint = "/$timestamp-$indexName/_doc/${Generators.randomBasedGenerator().generate()}"
 
         performRequest("PUT", endpoint, entity)
     }
