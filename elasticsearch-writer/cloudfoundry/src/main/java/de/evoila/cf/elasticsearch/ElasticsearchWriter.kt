@@ -28,7 +28,6 @@ import java.sql.Date
 import java.util.concurrent.Semaphore
 import javax.annotation.PostConstruct
 
-
 /**
  * Created by reneschollmeyer, evoila on 07.03.18.
  */
@@ -99,7 +98,7 @@ class ElasticsearchWriter @Autowired constructor(
 
             writerObject = if(matchMap != null && matchMap.isNotEmpty()) {
                 LogMessage(data.timestamp, JsonBuilder(matchMap).toPrettyString().replace("\\", ""), data.logMessageType, data.sourceType,
-                        data.appId, data.appName, data.space, data.organization, data.organizationGuid, data.sourceInstance)
+                        data.appId, data.appName, data.space, data.spaceId, data.organization, data.organizationGuid, data.sourceInstance)
             } else {
                 data
             }
