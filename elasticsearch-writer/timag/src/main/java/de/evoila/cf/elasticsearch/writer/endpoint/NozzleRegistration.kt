@@ -56,10 +56,8 @@ class NozzleRegistration @Autowired constructor(private val kafkaPropertiesBean:
         var topicList = getTopicList()
 
         nozzle.endpoints?.forEach {endpoint ->
-            val topic = "${nozzle.nozzleId}-$endpoint"
-
-            if(!topicList.contains(topic)) {
-                topicList = topicList.plus(topic)
+            if(!topicList.contains(endpoint)) {
+                topicList = topicList.plus(endpoint)
             }
         }
 
