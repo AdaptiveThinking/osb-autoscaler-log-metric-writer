@@ -50,7 +50,7 @@ class NozzleRegistration @Autowired constructor(private val kafkaPropertiesBean:
     fun registerNozzle(@RequestBody nozzle: Nozzle): ResponseEntity<Nozzle>? {
 
         nozzle.endpoints?.forEach { endpoint ->
-            createConsumer(nozzle.nozzleId + "-" + endpoint)
+            createConsumer(endpoint)
         }
 
         var topicList = getTopicList()
