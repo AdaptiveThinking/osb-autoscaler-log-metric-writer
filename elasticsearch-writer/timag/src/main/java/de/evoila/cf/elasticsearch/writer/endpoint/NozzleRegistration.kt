@@ -49,15 +49,12 @@ class NozzleRegistration @Autowired constructor(private val kafkaPropertiesBean:
     @PutMapping(value = ["/register"])
     fun registerNozzle(@RequestBody nozzle: Nozzle): ResponseEntity<Nozzle>? {
 
-        nozzle.endpoints?.forEach { endpoint ->
-            createConsumer(endpoint)
-        }
-
         var topicList = getTopicList()
 
         nozzle.endpoints?.forEach {endpoint ->
             if(!topicList.contains(endpoint)) {
                 topicList = topicList.plus(endpoint)
+                createConsumer(endpoint)
             }
         }
 
